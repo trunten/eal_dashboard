@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>EAL Dashboard</title>
+<style>
+  :root{
+    --bg:#07111f;
+    --bg2:#0b1728;
+    --panel:rgba(18,32,52,.82);
+    --panel2:rgba(11,25,43,.92);
+    --text:#eef5ff;
+    --muted:#9eb1c9;
+    --line:rgba(255,255,255,.09);
+    --blue:#6ea8ff;
+    --cyan:#54d7e8;
+    --green:#62d6a4;
+    --amber:#f0c36b;
+    --pink:#eb8fbd;
+    --danger:#ff8d8d;
+    --shadow:0 18px 50px rgba(0,0,0,.28);
+    --radius:22px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    min-height:100vh;
+    color:var(--text);
+    font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background:
+      radial-gradient(circle at 8% 2%, rgba(84,215,232,.17), transparent 26rem),
+      radial-gradient(circle at 92% 8%, rgba(110,168,255,.18), transparent 28rem),
+      linear-gradient(145deg,var(--bg),var(--bg2) 58%,#091423);
+  }
+  body:before{
+    content:""; position:fixed; inset:0; pointer-events:none; opacity:.18;
+    background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
+    background-size:44px 44px;
+    mask-image:linear-gradient(to bottom,black,transparent 80%);
+  }
+  .shell{width:min(1500px, calc(100% - 34px)); margin:0 auto; padding:30px 0 44px}
+  .topbar{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;margin-bottom:22px}
+  .eyebrow{font-size:.78rem;letter-spacing:.16em;text-transform:uppercase;color:var(--cyan);font-weight:800;margin-bottom:8px}
+  h1{font-size:clamp(2rem,4vw,3.5rem);line-height:1;margin:0 0 9px;letter-spacing:-.04em}
+  .subtitle{color:var(--muted);max-width:740px;font-size:1rem;line-height:1.55;margin:0}
+  .badge{flex:0 0 auto;padding:10px 13px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.04);color:#c9d8ea;font-size:.82rem;box-shadow:var(--shadow)}
+
+  .grid{display:grid;gap:16px}
+  .kpis{grid-template-columns:repeat(5,minmax(0,1fr));margin:18px 0 16px}
+  .card{background:linear-gradient(180deg,rgba(22,39,62,.88),rgba(11,25,43,.86));border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);backdrop-filter:blur(14px)}
+  .kpi{padding:18px 18px 17px;position:relative;overflow:hidden;min-height:132px}
+  .kpi:after{content:"";position:absolute;width:90px;height:90px;right:-28px;top:-28px;border-radius:50%;background:var(--glow,rgba(110,168,255,.12));filter:blur(3px)}
+  .kpi-label{color:var(--muted);font-size:.76rem;text-transform:uppercase;letter-spacing:.1em;font-weight:750}
+  .kpi-value{font-size:2.3rem;line-height:1;font-weight:850;letter-spacing:-.04em;margin:12px 0 7px}
+  .kpi-note{font-size:.83rem;color:#c5d3e4;line-height:1.35}
+  .accent{color:var(--cyan)}
+  .accent2{color:var(--green)}
+  .accent3{color:var(--amber)}
+  .accent4{color:var(--pink)}
+
+  .main{grid-template-columns:minmax(0,1.55fr) minmax(350px,.8fr)}
+  .panel{padding:20px}
+  .panel-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:14px}
+  .panel-title{font-size:1.02rem;font-weight:820;letter-spacing:-.01em;margin:0}
+  .panel-sub{font-size:.83rem;color:var(--muted);margin:4px 0 0;line-height:1.4}
+  .seg{display:inline-flex;gap:4px;padding:4px;background:rgba(255,255,255,.045);border:1px solid var(--line);border-radius:12px}
+  .seg button{appearance:none;border:0;background:transparent;color:var(--muted);font:inherit;font-size:.78rem;font-weight:780;padding:7px 10px;border-radius:9px;cursor:pointer;transition:.2s ease}
+  .seg button:hover{color:var(--text)}
+  .seg button.active{background:rgba(110,168,255,.17);color:#fff;box-shadow:inset 0 0 0 1px rgba(110,168,255,.26)}
+
+  .chart-wrap{min-height:330px;display:flex;align-items:center;justify-content:center}
+  svg{display:block;width:100%;height:auto}
+  .chart-grid{stroke:rgba(255,255,255,.08);stroke-width:1}
+  .axis-label{fill:#8fa5bf;font-size:12px}
+  .bar-label{fill:#dce9f8;font-size:13px;font-weight:700}
+  .value-label{fill:#ffffff;font-size:12px;font-weight:800}
+
+  .insights{display:grid;gap:10px}
+  .insight{border:1px solid var(--line);border-radius:16px;padding:14px 14px;background:rgba(255,255,255,.03);display:grid;grid-template-columns:36px 1fr;gap:11px;align-items:start}
+  .icon{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;background:rgba(84,215,232,.10);border:1px solid rgba(84,215,232,.15);font-weight:900;color:var(--cyan)}
+  .insight b{font-size:.9rem;display:block;margin-bottom:3px}
+  .insight p{margin:0;color:var(--muted);font-size:.81rem;line-height:1.42}
+
+  .secondary{grid-template-columns:minmax(0,1fr) minmax(0,1fr);margin-top:16px}
+  .mini-chart{min-height:300px}
+
+  .year-profile{display:grid;grid-template-columns:155px 1fr;gap:18px;align-items:center}
+  .year-select{width:100%;appearance:none;border:1px solid var(--line);background:#0f2035;color:var(--text);padding:10px 12px;border-radius:11px;font:inherit;font-size:.86rem;outline:none}
+  .donut{width:145px;height:145px;border-radius:50%;position:relative;display:grid;place-items:center;background:conic-gradient(var(--cyan) calc(var(--p)*1%),rgba(255,255,255,.08) 0);box-shadow:inset 0 0 24px rgba(0,0,0,.2)}
+  .donut:before{content:"";position:absolute;inset:14px;background:#0d1c30;border-radius:50%;border:1px solid var(--line)}
+  .donut .inner{z-index:1;text-align:center}
+  .donut .big{font-size:2rem;font-weight:900;line-height:1}.donut .small{color:var(--muted);font-size:.73rem;margin-top:5px}
+  .profile-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+  .profile-stat{padding:11px 12px;border-radius:13px;background:rgba(255,255,255,.035);border:1px solid var(--line)}
+  .profile-stat span{display:block;font-size:.71rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px}
+  .profile-stat strong{font-size:1.08rem}
+
+  .table-card{margin-top:16px;padding:18px;overflow:hidden}
+  .table-scroll{overflow:auto;border:1px solid var(--line);border-radius:16px}
+  table{width:100%;border-collapse:collapse;min-width:850px;font-size:.84rem}
+  th,td{padding:11px 12px;border-bottom:1px solid rgba(255,255,255,.07);text-align:right;white-space:nowrap}
+  th:first-child,td:first-child{text-align:left;position:sticky;left:0;background:#0e1f34;z-index:1}
+  thead th{position:sticky;top:0;background:#102239;color:#b9c9dc;font-size:.72rem;text-transform:uppercase;letter-spacing:.07em;z-index:2}
+  thead th:first-child{z-index:3}
+  tbody tr:hover td{background:rgba(110,168,255,.055)}
+  tbody tr:hover td:first-child{background:#132742}
+  tbody tr:last-child td{font-weight:850;border-bottom:0;background:rgba(84,215,232,.055)}
+  .pct{font-weight:850;color:#eaf7ff}
+  .heat{display:inline-block;min-width:48px;padding:4px 8px;border-radius:999px;background:rgba(84,215,232,calc((var(--v) - 45)/220));border:1px solid rgba(84,215,232,.12)}
+
+  .foot{margin-top:16px;color:#7f95af;font-size:.75rem;line-height:1.5;display:flex;justify-content:space-between;gap:20px}
+  .print-btn{appearance:none;border:1px solid var(--line);background:rgba(255,255,255,.04);color:#dce8f7;border-radius:11px;padding:9px 12px;font:inherit;font-size:.78rem;cursor:pointer}
+  .print-btn:hover{background:rgba(255,255,255,.07)}
+
+  @media(max-width:1120px){.kpis{grid-template-columns:repeat(3,1fr)}.main{grid-template-columns:1fr}.secondary{grid-template-columns:1fr}}
+  @media(max-width:720px){.shell{width:min(100% - 20px,1500px);padding-top:18px}.topbar{display:block}.badge{display:inline-block;margin-top:14px}.kpis{grid-template-columns:1fr 1fr}.kpi{min-height:122px}.kpi-value{font-size:2rem}.panel{padding:15px}.panel-head{display:block}.seg{margin-top:10px}.year-profile{grid-template-columns:1fr;text-align:center}.donut{margin:auto}.profile-list{text-align:left}.foot{display:block}.print-btn{margin-top:10px}}
+  @media(max-width:470px){.kpis{grid-template-columns:1fr}.profile-list{grid-template-columns:1fr}.panel-title{font-size:.96rem}.chart-wrap{min-height:285px}}
+
+  @media print{
+    :root{--text:#122033;--muted:#53657b;--line:#dce3eb}
+    body{background:#fff;color:#122033}.shell{width:100%;padding:0}.badge,.print-btn,.seg{display:none!important}.card{box-shadow:none;background:#fff;border:1px solid #dfe5ec;break-inside:avoid}.kpis{grid-template-columns:repeat(5,1fr)}.kpi{min-height:0}.main,.secondary{grid-template-columns:1fr 1fr}.table-scroll{overflow:visible}.table-card{break-before:page}thead th,th:first-child,td:first-child{position:static;background:#f3f6fa!important}.axis-label{fill:#52657b}.bar-label,.value-label{fill:#122033}.chart-grid{stroke:#dbe3ec}.donut:before{background:#fff}.foot{color:#65778d}body:before{display:none}
+  }
+</style>
+</head>
+<body>
+<div class="shell">
+  <header class="topbar">
+    <div>
+      <div class="eyebrow">Language profile</div>
+      <h1>EAL Dashboard</h1>
+      <p class="subtitle">A compact view of EAL prevalence, headcount and gender patterns across Years 7–13, with First Language Not English shown alongside.</p>
+    </div>
+    <div class="badge" id="dataStatus">Loading live data…</div>
+  </header>
+
+  <section class="grid kpis">
+    <article class="card kpi" style="--glow:rgba(84,215,232,.18)"><div class="kpi-label">EAL pupils</div><div class="kpi-value accent" id="kpiEalCount">—</div><div class="kpi-note" id="kpiEalNote">Loading…</div></article>
+    <article class="card kpi" style="--glow:rgba(98,214,164,.16)"><div class="kpi-label">Overall EAL rate</div><div class="kpi-value accent2" id="kpiEalRate">—</div><div class="kpi-note" id="kpiRateNote">Loading…</div></article>
+    <article class="card kpi" style="--glow:rgba(240,195,107,.18)"><div class="kpi-label">Highest year group</div><div class="kpi-value accent3" id="kpiHighest">—</div><div class="kpi-note" id="kpiHighestNote">Loading…</div></article>
+    <article class="card kpi" style="--glow:rgba(235,143,189,.16)"><div class="kpi-label">Lowest year group</div><div class="kpi-value accent4" id="kpiLowest">—</div><div class="kpi-note" id="kpiLowestNote">Loading…</div></article>
+    <article class="card kpi" style="--glow:rgba(110,168,255,.16)"><div class="kpi-label">FLNE pupils</div><div class="kpi-value" style="color:var(--blue)" id="kpiFlneCount">—</div><div class="kpi-note" id="kpiFlneNote">Loading…</div></article>
+  </section>
+
+  <section class="grid main">
+    <article class="card panel">
+      <div class="panel-head">
+        <div><h2 class="panel-title">EAL prevalence by year group</h2><p class="panel-sub">Switch between all pupils, male pupils and female pupils.</p></div>
+        <div class="seg" id="genderSeg"><button class="active" data-g="all">All</button><button data-g="male">Male</button><button data-g="female">Female</button></div>
+      </div>
+      <div class="chart-wrap"><svg id="prevalenceChart" viewBox="0 0 760 350" role="img" aria-label="EAL prevalence by year group"></svg></div>
+    </article>
+
+    <aside class="card panel">
+      <div class="panel-head"><div><h2 class="panel-title">What stands out</h2><p class="panel-sub">Automatically drawn from the live figures.</p></div></div>
+      <div class="insights" id="insights">
+        <div class="insight"><div class="icon">…</div><div><b>Loading live data</b><p>The dashboard is calculating the current language profile from the Arbor export.</p></div></div>
+      </div>
+    </aside>
+  </section>
+
+  <section class="grid secondary">
+    <article class="card panel">
+      <div class="panel-head"><div><h2 class="panel-title">Gender comparison</h2><p class="panel-sub">EAL percentage by year group; the connecting line makes the size of each gap easy to see.</p></div></div>
+      <div class="mini-chart"><svg id="genderChart" viewBox="0 0 720 310" role="img" aria-label="Male and female EAL percentage comparison"></svg></div>
+    </article>
+
+    <article class="card panel">
+      <div class="panel-head">
+        <div><h2 class="panel-title">Year-group profile</h2><p class="panel-sub">Select a year to inspect its headline figures.</p></div>
+        <select id="yearSelect" class="year-select" aria-label="Select year group"></select>
+      </div>
+      <div class="year-profile">
+        <div class="donut" id="donut" style="--p:0"><div class="inner"><div class="big" id="donutPct">—</div><div class="small">EAL prevalence</div></div></div>
+        <div class="profile-list">
+          <div class="profile-stat"><span>EAL count</span><strong id="ealCount">—</strong></div>
+          <div class="profile-stat"><span>FLNE count</span><strong id="flneCount">—</strong></div>
+          <div class="profile-stat"><span>Male EAL</span><strong id="malePct">—</strong></div>
+          <div class="profile-stat"><span>Female EAL</span><strong id="femalePct">—</strong></div>
+          <div class="profile-stat"><span>Count difference</span><strong id="countGap">—</strong></div>
+          <div class="profile-stat"><span>Gender gap</span><strong id="genderGap">—</strong></div>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <section class="card table-card">
+    <div class="panel-head"><div><h2 class="panel-title">Underlying data</h2><p class="panel-sub">Calculated live from the Arbor export each time this page is loaded.</p></div></div>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>Year</th><th>FLNE all</th><th>FLNE male</th><th>FLNE female</th><th>EAL all</th><th>EAL male</th><th>EAL female</th><th>EAL % all</th><th>EAL % male</th><th>EAL % female</th></tr></thead>
+        <tbody id="dataBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <div id="footerNote">FLNE = First Language Not English. All figures are calculated live from Arbor</div>
+    <button class="print-btn" onclick="window.print()">Print / save as PDF</button>
+  </footer>
+</div>
+
+<script>
+const DATA_URL = 'https://broadway-academy.uk.arbor.sc/data-export/export/id/283/h/e38444197e8d77c0/format/json/v/2/';
+const YEARS = ['7','8','9','10','11','12','13'];
+const FLNE_EXCLUDED = new Set([
+  '',
+  'english',
+  'not known but believed to be english',
+  'not obtained'
+]);
+
+let rows = [];
+let total = null;
+let currentGender = 'all';
+const genderIndex = {all:0,male:1,female:2};
+const svgNS = 'http://www.w3.org/2000/svg';
+
+function el(name,attrs={},text=''){
+  const n=document.createElementNS(svgNS,name);
+  Object.entries(attrs).forEach(([k,v])=>n.setAttribute(k,v));
+  if(text)n.textContent=text;
+  return n;
+}
+function clear(node){while(node.firstChild)node.removeChild(node.firstChild)}
+function roundPct(n,d){return d ? Math.round((n/d)*100) : 0}
+function normaliseText(v){return v == null ? '' : String(v).trim()}
+function isEAL(record){
+  const v=record.EAL;
+  if(v === true || v === 1) return true;
+  return ['true','1','yes','y'].includes(normaliseText(v).toLowerCase());
+}
+function isFLNE(record){
+  const lang=normaliseText(record['First Language']).toLowerCase();
+  return !FLNE_EXCLUDED.has(lang);
+}
+function recordYear(record){
+  const raw=normaliseText(record['Year group(s) this academic year']);
+  const match=raw.match(/(?:year\s*)?(\d{1,2})/i);
+  return match && YEARS.includes(match[1]) ? match[1] : null;
+}
+function recordSex(record){
+  const s=normaliseText(record.Sex).toLowerCase();
+  if(s === 'male' || s === 'm') return 'male';
+  if(s === 'female' || s === 'f') return 'female';
+  return 'other';
+}
+function stats(records){
+  const eal=records.reduce((n,r)=>n+(isEAL(r)?1:0),0);
+  const flne=records.reduce((n,r)=>n+(isFLNE(r)?1:0),0);
+  return {n:records.length,eal,flne,pct:roundPct(eal,records.length)};
+}
+function summarise(records,year){
+  const all=stats(records);
+  const male=stats(records.filter(r=>recordSex(r)==='male'));
+  const female=stats(records.filter(r=>recordSex(r)==='female'));
+  return {
+    year,
+    population:[all.n,male.n,female.n],
+    flne:[all.flne,male.flne,female.flne],
+    eal:[all.eal,male.eal,female.eal],
+    pct:[all.pct,male.pct,female.pct]
+  };
+}
+function dedupe(records){
+  const seen=new Set();
+  return records.filter((r,index)=>{
+    const id=r.studentId ?? r.StudentId ?? r.studentID;
+    if(id == null || id === '') return true;
+    const key=String(id);
+    if(seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
+function computeDashboardData(raw){
+  if(!Array.isArray(raw)) throw new Error('The data export did not return a JSON array.');
+  const unique=dedupe(raw);
+  const inScope=unique.filter(r=>recordYear(r));
+  if(!inScope.length) throw new Error('No Year 7–13 pupil records were found in the export.');
+  rows=YEARS.map(year=>summarise(inScope.filter(r=>recordYear(r)===year),year));
+  total=summarise(inScope,'Total');
+}
+
+function renderPrevalence(g='all'){
+  const svg=document.getElementById('prevalenceChart'); clear(svg);
+  if(!rows.length) return;
+  const i=genderIndex[g];
+  const W=760,H=350,L=66,R=30,T=16,B=34; const w=W-L-R,h=H-T-B; const rowH=h/rows.length;
+  [0,20,40,60,80,100].forEach(v=>{
+    const x=L+w*v/100;
+    svg.appendChild(el('line',{x1:x,y1:T,x2:x,y2:H-B,class:'chart-grid'}));
+    svg.appendChild(el('text',{x,y:H-9,'text-anchor':'middle',class:'axis-label'},v+'%'));
+  });
+  const defs=el('defs');
+  const lg=el('linearGradient',{id:'grad',x1:'0',x2:'1'});
+  lg.appendChild(el('stop',{offset:'0%','stop-color':'#54d7e8'}));
+  lg.appendChild(el('stop',{offset:'100%','stop-color':'#6ea8ff'}));
+  defs.appendChild(lg); svg.appendChild(defs);
+  rows.forEach((r,idx)=>{
+    const y=T+idx*rowH+8, bh=rowH-14, val=r.pct[i], bw=w*val/100;
+    svg.appendChild(el('text',{x:L-16,y:y+bh/2+5,'text-anchor':'end',class:'bar-label'},'Y'+r.year));
+    svg.appendChild(el('rect',{x:L,y,width:w,height:bh,rx:9,fill:'rgba(255,255,255,.045)'}));
+    const bar=el('rect',{x:L,y,width:0,height:bh,rx:9,fill:'url(#grad)'}); svg.appendChild(bar);
+    requestAnimationFrame(()=>{bar.style.transition='width .65s cubic-bezier(.2,.8,.2,1)';bar.setAttribute('width',bw)});
+    svg.appendChild(el('text',{x:Math.min(L+bw+10,W-R-6),y:y+bh/2+4,class:'value-label'},val+'%'));
+  });
+}
+
+function renderGender(){
+  const svg=document.getElementById('genderChart'); clear(svg);
+  if(!rows.length) return;
+  const W=720,H=310,L=64,R=36,T=24,B=40,w=W-L-R,h=H-T-B;
+  const observed=rows.flatMap(r=>[r.pct[1],r.pct[2]]).filter(Number.isFinite);
+  const minObserved=Math.min(...observed,40), maxObserved=Math.max(...observed,90);
+  const yMin=Math.max(0,Math.floor((minObserved-5)/10)*10);
+  const yMax=Math.min(100,Math.ceil((maxObserved+5)/10)*10);
+  const span=Math.max(10,yMax-yMin);
+  const ticks=[]; for(let v=yMin;v<=yMax;v+=10) ticks.push(v);
+  ticks.forEach(v=>{
+    const y=T+h-(v-yMin)/span*h;
+    svg.appendChild(el('line',{x1:L,y1:y,x2:W-R,y2:y,class:'chart-grid'}));
+    svg.appendChild(el('text',{x:L-12,y:y+4,'text-anchor':'end',class:'axis-label'},v+'%'));
+  });
+  rows.forEach((r,idx)=>{
+    const x=L+w*(idx+.5)/rows.length;
+    const ym=T+h-(r.pct[1]-yMin)/span*h;
+    const yf=T+h-(r.pct[2]-yMin)/span*h;
+    svg.appendChild(el('line',{x1:x,y1:ym,x2:x,y2:yf,stroke:'rgba(255,255,255,.3)','stroke-width':'3','stroke-linecap':'round'}));
+    svg.appendChild(el('circle',{cx:x,cy:ym,r:7,fill:'#6ea8ff',stroke:'#0b1728','stroke-width':'3'}));
+    svg.appendChild(el('circle',{cx:x,cy:yf,r:7,fill:'#eb8fbd',stroke:'#0b1728','stroke-width':'3'}));
+    svg.appendChild(el('text',{x,y:H-13,'text-anchor':'middle',class:'bar-label'},'Y'+r.year));
+  });
+  svg.appendChild(el('circle',{cx:W-145,cy:16,r:5,fill:'#6ea8ff'})); svg.appendChild(el('text',{x:W-133,y:20,class:'axis-label'},'Male'));
+  svg.appendChild(el('circle',{cx:W-82,cy:16,r:5,fill:'#eb8fbd'})); svg.appendChild(el('text',{x:W-70,y:20,class:'axis-label'},'Female'));
+}
+
+function populateTable(){
+  const body=document.getElementById('dataBody'); body.innerHTML='';
+  if(!rows.length || !total) return;
+  [...rows,total].forEach(r=>{
+    const tr=document.createElement('tr');
+    const cells=[r.year,...r.flne,...r.eal];
+    cells.forEach((v,j)=>{
+      const td=document.createElement('td');
+      td.textContent=j===0?(r.year==='Total'?'Total':'Year '+r.year):v;
+      tr.appendChild(td);
+    });
+    r.pct.forEach(v=>{
+      const td=document.createElement('td'); td.className='pct';
+      td.innerHTML=`<span class="heat" style="--v:${v}">${v}%</span>`;
+      tr.appendChild(td);
+    });
+    body.appendChild(tr);
+  });
+}
+
+function updateProfile(){
+  const sel=document.getElementById('yearSelect');
+  const r=rows.find(x=>x.year===sel.value) || rows[0];
+  if(!r) return;
+  const countDiff=r.eal[0]-r.flne[0], genderGap=Math.abs(r.pct[1]-r.pct[2]);
+  document.getElementById('donut').style.setProperty('--p',r.pct[0]);
+  document.getElementById('donutPct').textContent=r.pct[0]+'%';
+  document.getElementById('ealCount').textContent=r.eal[0];
+  document.getElementById('flneCount').textContent=r.flne[0];
+  document.getElementById('malePct').textContent=r.pct[1]+'%';
+  document.getElementById('femalePct').textContent=r.pct[2]+'%';
+  document.getElementById('countGap').textContent=(countDiff>0?'+':'')+countDiff;
+  document.getElementById('genderGap').textContent=genderGap+' pp';
+}
+
+function setupProfile(){
+  const sel=document.getElementById('yearSelect'); const previous=sel.value;
+  sel.innerHTML='';
+  rows.forEach(r=>{const o=document.createElement('option');o.value=r.year;o.textContent='Year '+r.year;sel.appendChild(o)});
+  if(rows.some(r=>r.year===previous)) sel.value=previous;
+  updateProfile();
+}
+
+function diffPhrase(eal,flne){
+  const d=flne-eal;
+  if(d===0) return 'Same as the EAL count';
+  return `${Math.abs(d)} ${d>0?'more':'fewer'} than EAL count`;
+}
+
+function renderKpis(){
+  const highest=rows.reduce((a,b)=>b.pct[0]>a.pct[0]?b:a,rows[0]);
+  const lowest=rows.reduce((a,b)=>b.pct[0]<a.pct[0]?b:a,rows[0]);
+  document.getElementById('kpiEalCount').textContent=total.eal[0].toLocaleString();
+  document.getElementById('kpiEalNote').textContent=`${total.eal[1].toLocaleString()} male • ${total.eal[2].toLocaleString()} female`;
+  document.getElementById('kpiEalRate').textContent=total.pct[0]+'%';
+  document.getElementById('kpiRateNote').textContent=`${total.pct[1]}% male • ${total.pct[2]}% female`;
+  document.getElementById('kpiHighest').textContent='Y'+highest.year;
+  document.getElementById('kpiHighestNote').textContent=`${highest.pct[0]}% EAL • ${highest.eal[0].toLocaleString()} pupils`;
+  document.getElementById('kpiLowest').textContent='Y'+lowest.year;
+  document.getElementById('kpiLowestNote').textContent=`${lowest.pct[0]}% EAL • ${lowest.eal[0].toLocaleString()} pupils`;
+  document.getElementById('kpiFlneCount').textContent=total.flne[0].toLocaleString();
+  document.getElementById('kpiFlneNote').textContent=diffPhrase(total.eal[0],total.flne[0]);
+}
+
+function renderInsights(){
+  const highest=rows.reduce((a,b)=>b.pct[0]>a.pct[0]?b:a,rows[0]);
+  const widest=rows.reduce((a,b)=>Math.abs(b.pct[1]-b.pct[2])>Math.abs(a.pct[1]-a.pct[2])?b:a,rows[0]);
+  const gap=Math.abs(widest.pct[1]-widest.pct[2]);
+  const higher=widest.pct[1]===widest.pct[2]?'Male and female':(widest.pct[1]>widest.pct[2]?'Male':'Female');
+  const lower=higher==='Male'?'female':'male';
+  const wholeGap=Math.abs(total.pct[1]-total.pct[2]);
+  const wholeTitle=wholeGap<=2?'Whole-school gender rates are very similar':`Whole-school gender rates differ by ${wholeGap} points`;
+  const d=total.eal[0]-total.flne[0];
+  let countTitle='EAL and FLNE counts are identical';
+  let countText=`Both measures contain ${total.eal[0].toLocaleString()} pupils.`;
+  if(d!==0){
+    countTitle=`EAL count is ${d>0?'above':'below'} FLNE`;
+    countText=`${total.eal[0].toLocaleString()} pupils are recorded as EAL versus ${total.flne[0].toLocaleString()} with a first language not English, a difference of ${Math.abs(d).toLocaleString()}.`;
+  }
+  const cards=[
+    ['↑',`Year ${highest.year} has the highest EAL prevalence`,`${highest.pct[0]}% overall, with ${highest.pct[1]}% of boys and ${highest.pct[2]}% of girls recorded as EAL.`],
+    ['↕',`The widest gender gap is in Year ${widest.year}`,gap===0?`Male and female prevalence are both ${widest.pct[1]}%.`:`${higher} prevalence is ${Math.max(widest.pct[1],widest.pct[2])}% compared with ${Math.min(widest.pct[1],widest.pct[2])}% for ${lower}s — a ${gap} percentage-point gap.`],
+    ['≈',wholeTitle,`Overall prevalence is ${total.pct[1]}% for males and ${total.pct[2]}% for females.`],
+    ['Δ',countTitle,countText]
+  ];
+  const box=document.getElementById('insights'); box.innerHTML='';
+  cards.forEach(([icon,title,body])=>{
+    const card=document.createElement('div'); card.className='insight';
+    const i=document.createElement('div'); i.className='icon'; i.textContent=icon;
+    const text=document.createElement('div'); const b=document.createElement('b'); b.textContent=title; const p=document.createElement('p'); p.textContent=body;
+    text.append(b,p); card.append(i,text); box.appendChild(card);
+  });
+}
+
+function setStatus(message){document.getElementById('dataStatus').textContent=message}
+function showError(err){
+  console.error(err);
+  setStatus('Live data unavailable');
+  const body=document.getElementById('dataBody');
+  body.innerHTML='<tr><td colspan="10" style="text-align:left;color:var(--danger);padding:18px">Unable to load the live Arbor export. Check the network connection and that the export allows browser access from this page.</td></tr>';
+  const box=document.getElementById('insights');
+  box.innerHTML='<div class="insight"><div class="icon">!</div><div><b>Live data could not be loaded</b><p>The dashboard has not substituted old figures. Reload the page after checking access to the Arbor export.</p></div></div>';
+  ['kpiEalNote','kpiRateNote','kpiHighestNote','kpiLowestNote','kpiFlneNote'].forEach(id=>document.getElementById(id).textContent='Live data unavailable');
+  document.getElementById('footerNote').textContent='Live data could not be loaded.';
+}
+
+async function loadData(){
+  setStatus('Loading live data…');
+  try{
+    const separator=DATA_URL.includes('?')?'&':'?';
+    const response=await fetch(DATA_URL+separator+'_='+Date.now(),{
+      method:'GET',
+      cache:'no-store',
+      credentials:'omit',
+      headers:{'Accept':'application/json'}
+    });
+    if(!response.ok) throw new Error(`Data request failed with HTTP ${response.status}.`);
+    const raw=await response.json();
+    computeDashboardData(raw);
+    renderKpis();
+    renderInsights();
+    renderPrevalence(currentGender);
+    renderGender();
+    populateTable();
+    setupProfile();
+    const stamp=new Intl.DateTimeFormat(undefined,{hour:'2-digit',minute:'2-digit'}).format(new Date());
+    setStatus(`Live data • refreshed ${stamp}`);
+  }catch(err){showError(err)}
+}
+
+document.querySelectorAll('#genderSeg button').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('#genderSeg button').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active'); currentGender=b.dataset.g; renderPrevalence(currentGender);
+}));
+document.getElementById('yearSelect').addEventListener('change',updateProfile);
+loadData();
+</script>
+</body>
+</html>
