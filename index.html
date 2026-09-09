@@ -110,17 +110,39 @@
   .pct{font-weight:850;color:#eaf7ff}
   .heat{display:inline-block;min-width:48px;padding:4px 8px;border-radius:999px;background:rgba(84,215,232,calc((var(--v) - 45)/220));border:1px solid rgba(84,215,232,.12)}
 
+
+  .language-card{margin-top:16px;padding:18px;overflow:hidden}
+  .language-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+  .language-scroll{height:386px;overflow:auto;border:1px solid var(--line);border-radius:16px;scrollbar-gutter:stable}
+  .language-table{min-width:760px}
+  .language-table th{cursor:pointer;user-select:none;transition:background .15s ease,color .15s ease}
+  .language-table th:hover{background:#142a46;color:#fff}
+  .language-table th .sort-mark{display:inline-block;width:13px;margin-left:4px;color:var(--cyan);font-size:.72rem;text-align:center}
+  .language-table th[data-sort-dir="none"] .sort-mark{color:rgba(255,255,255,.24)}
+  .language-table td:first-child{font-weight:780}
+  .language-table tbody tr:last-child td{font-weight:inherit;background:transparent}
+  .language-table tbody tr:last-child:hover td{background:rgba(110,168,255,.055)}
+  .language-table tbody tr:last-child:hover td:first-child{background:#132742}
+  .language-chart-scroll{height:386px;overflow:auto;border:1px solid var(--line);border-radius:16px;padding:12px 14px;scrollbar-gutter:stable}
+  .language-chart{display:grid;gap:9px;min-width:560px}
+  .lang-bar-row{display:grid;grid-template-columns:minmax(150px,220px) 1fr 74px;gap:11px;align-items:center;min-height:31px}
+  .lang-bar-name{font-size:.8rem;font-weight:760;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#dce8f7}
+  .lang-bar-track{height:16px;border-radius:999px;background:rgba(255,255,255,.05);overflow:hidden;border:1px solid rgba(255,255,255,.04)}
+  .lang-bar-fill{height:100%;width:0;border-radius:inherit;background:linear-gradient(90deg,var(--cyan),var(--blue));transition:width .55s cubic-bezier(.2,.8,.2,1)}
+  .lang-bar-value{text-align:right;font-size:.8rem;font-weight:850;color:#eaf7ff;font-variant-numeric:tabular-nums}
+  .language-view[hidden]{display:none!important}
+
   .foot{margin-top:16px;color:#7f95af;font-size:.75rem;line-height:1.5;display:flex;justify-content:space-between;gap:20px}
   .print-btn{appearance:none;border:1px solid var(--line);background:rgba(255,255,255,.04);color:#dce8f7;border-radius:11px;padding:9px 12px;font:inherit;font-size:.78rem;cursor:pointer}
   .print-btn:hover{background:rgba(255,255,255,.07)}
 
   @media(max-width:1120px){.kpis{grid-template-columns:repeat(3,1fr)}.main{grid-template-columns:1fr}.secondary{grid-template-columns:1fr}}
-  @media(max-width:720px){.shell{width:min(100% - 20px,1500px);padding-top:18px}.topbar{display:block}.badge{display:inline-block;margin-top:14px}.kpis{grid-template-columns:1fr 1fr}.kpi{min-height:122px}.kpi-value{font-size:2rem}.panel{padding:15px}.panel-head{display:block}.seg{margin-top:10px}.year-profile{grid-template-columns:1fr;text-align:center}.donut{margin:auto}.profile-list{text-align:left}.foot{display:block}.print-btn{margin-top:10px}}
+  @media(max-width:720px){.shell{width:min(100% - 20px,1500px);padding-top:18px}.topbar{display:block}.badge{display:inline-block;margin-top:14px}.kpis{grid-template-columns:1fr 1fr}.kpi{min-height:122px}.kpi-value{font-size:2rem}.panel{padding:15px}.panel-head{display:block}.seg{margin-top:10px}.language-controls{justify-content:flex-start;margin-top:10px}.language-scroll,.language-chart-scroll{height:365px}.year-profile{grid-template-columns:1fr;text-align:center}.donut{margin:auto}.profile-list{text-align:left}.foot{display:block}.print-btn{margin-top:10px}}
   @media(max-width:470px){.kpis{grid-template-columns:1fr}.profile-list{grid-template-columns:1fr}.panel-title{font-size:.96rem}.chart-wrap{min-height:285px}}
 
   @media print{
     :root{--text:#122033;--muted:#53657b;--line:#dce3eb}
-    body{background:#fff;color:#122033}.shell{width:100%;padding:0}.badge,.print-btn,.seg{display:none!important}.card{box-shadow:none;background:#fff;border:1px solid #dfe5ec;break-inside:avoid}.kpis{grid-template-columns:repeat(5,1fr)}.kpi{min-height:0}.main,.secondary{grid-template-columns:1fr 1fr}.table-scroll{overflow:visible}.table-card{break-before:page}thead th,th:first-child,td:first-child{position:static;background:#f3f6fa!important}.axis-label{fill:#52657b}.bar-label,.value-label{fill:#122033}.chart-grid{stroke:#dbe3ec}.donut:before{background:#fff}.foot{color:#65778d}body:before{display:none}
+    body{background:#fff;color:#122033}.shell{width:100%;padding:0}.badge,.print-btn,.seg,.language-controls{display:none!important}.card{box-shadow:none;background:#fff;border:1px solid #dfe5ec;break-inside:avoid}.kpis{grid-template-columns:repeat(5,1fr)}.kpi{min-height:0}.main,.secondary{grid-template-columns:1fr 1fr}.table-scroll,.language-scroll{height:auto!important;max-height:none!important;overflow:visible!important}.language-card{break-before:page;break-inside:auto}.language-view[data-view="table"]{display:block!important}.language-view[data-view="chart"]{display:none!important}.table-card{break-before:page}thead th,th:first-child,td:first-child{position:static;background:#f3f6fa!important}.language-table th{cursor:default}.axis-label{fill:#52657b}.bar-label,.value-label{fill:#122033}.chart-grid{stroke:#dbe3ec}.donut:before{background:#fff}.foot{color:#65778d}body:before{display:none}
   }
 </style>
 </head>
@@ -162,13 +184,13 @@
 
   <section class="grid secondary">
     <article class="card panel">
-      <div class="panel-head"><div><h2 class="panel-title">Gender comparison</h2><p class="panel-sub">EAL percentage by year group; the connecting line makes the size of each gap easy to see.</p></div></div>
+      <div class="panel-head"><div><h2 class="panel-title">Gender comparison</h2><p class="panel-sub">EAL percentage by year group</p></div></div>
       <div class="mini-chart"><svg id="genderChart" viewBox="0 0 720 310" role="img" aria-label="Male and female EAL percentage comparison"></svg></div>
     </article>
 
     <article class="card panel">
       <div class="panel-head">
-        <div><h2 class="panel-title">Year-group profile</h2><p class="panel-sub">Select a year to inspect its headline figures.</p></div>
+        <div><h2 class="panel-title">Year-group profile</h2><p class="panel-sub">Select a year group or all years to inspect the headline figures.</p></div>
         <select id="yearSelect" class="year-select" aria-label="Select year group"></select>
       </div>
       <div class="year-profile">
@@ -183,6 +205,27 @@
         </div>
       </div>
     </article>
+  </section>
+
+  <section class="card language-card">
+    <div class="panel-head">
+      <div><h2 class="panel-title">Languages spoken</h2><p class="panel-sub">First-language distribution by year group</p></div>
+      <div class="language-controls">
+        <div class="seg" id="languageMeasureSeg" aria-label="Language values"><button class="active" data-measure="number">Numbers</button><button data-measure="percentage">Percentages</button></div>
+        <div class="seg" id="languageViewSeg" aria-label="Language view"><button class="active" data-view="table">Table</button><button data-view="chart">Bar chart</button></div>
+      </div>
+    </div>
+    <div class="language-view" data-view="table" id="languageTableView">
+      <div class="language-scroll">
+        <table class="language-table">
+          <thead><tr id="languageHead"></tr></thead>
+          <tbody id="languageBody"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="language-view" data-view="chart" id="languageChartView" hidden>
+      <div class="language-chart-scroll"><div class="language-chart" id="languageChart"></div></div>
+    </div>
   </section>
 
   <section class="card table-card">
@@ -214,6 +257,10 @@ const FLNE_EXCLUDED = new Set([
 let rows = [];
 let total = null;
 let currentGender = 'all';
+let languageRows = [];
+let languageMeasure = 'number';
+let languageView = 'table';
+let languageSort = {key:'total',dir:'desc'};
 const genderIndex = {all:0,male:1,female:2};
 const svgNS = 'http://www.w3.org/2000/svg';
 
@@ -235,6 +282,14 @@ function isFLNE(record){
   const lang=normaliseText(record['First Language']).toLowerCase();
   return !FLNE_EXCLUDED.has(lang);
 }
+function languageLabel(record){
+  const lang=normaliseText(record['First Language']);
+  if(!lang) return null;
+  const lower=lang.toLowerCase();
+  if(lower==='not known but believed to be english' || lower==='not obtained') return null;
+  return lang;
+}
+function canonicalLanguage(value){return normaliseText(value).toLocaleLowerCase()}
 function recordYear(record){
   const raw=normaliseText(record['Year group(s) this academic year']);
   const match=raw.match(/(?:year\s*)?(\d{1,2})/i);
@@ -282,6 +337,17 @@ function computeDashboardData(raw){
   if(!inScope.length) throw new Error('No Year 7–13 pupil records were found in the export.');
   rows=YEARS.map(year=>summarise(inScope.filter(r=>recordYear(r)===year),year));
   total=summarise(inScope,'Total');
+
+  const languageMap=new Map();
+  inScope.forEach(r=>{
+    const label=languageLabel(r);
+    if(!label) return;
+    const key=canonicalLanguage(label);
+    if(!languageMap.has(key)) languageMap.set(key,{language:label,counts:Object.fromEntries(YEARS.map(y=>[y,0])),total:0});
+    const item=languageMap.get(key), year=recordYear(r);
+    item.counts[year]++; item.total++;
+  });
+  languageRows=[...languageMap.values()];
 }
 
 function renderPrevalence(g='all'){
@@ -311,9 +377,10 @@ function renderPrevalence(g='all'){
 
 function renderGender(){
   const svg=document.getElementById('genderChart'); clear(svg);
-  if(!rows.length) return;
+  if(!rows.length || !total) return;
+  const plotRows=[...rows,total];
   const W=720,H=310,L=64,R=36,T=24,B=40,w=W-L-R,h=H-T-B;
-  const observed=rows.flatMap(r=>[r.pct[1],r.pct[2]]).filter(Number.isFinite);
+  const observed=plotRows.flatMap(r=>[r.pct[1],r.pct[2]]).filter(Number.isFinite);
   const minObserved=Math.min(...observed,40), maxObserved=Math.max(...observed,90);
   const yMin=Math.max(0,Math.floor((minObserved-5)/10)*10);
   const yMax=Math.min(100,Math.ceil((maxObserved+5)/10)*10);
@@ -324,17 +391,100 @@ function renderGender(){
     svg.appendChild(el('line',{x1:L,y1:y,x2:W-R,y2:y,class:'chart-grid'}));
     svg.appendChild(el('text',{x:L-12,y:y+4,'text-anchor':'end',class:'axis-label'},v+'%'));
   });
-  rows.forEach((r,idx)=>{
-    const x=L+w*(idx+.5)/rows.length;
+  plotRows.forEach((r,idx)=>{
+    const x=L+w*(idx+.5)/plotRows.length;
     const ym=T+h-(r.pct[1]-yMin)/span*h;
     const yf=T+h-(r.pct[2]-yMin)/span*h;
     svg.appendChild(el('line',{x1:x,y1:ym,x2:x,y2:yf,stroke:'rgba(255,255,255,.3)','stroke-width':'3','stroke-linecap':'round'}));
     svg.appendChild(el('circle',{cx:x,cy:ym,r:7,fill:'#6ea8ff',stroke:'#0b1728','stroke-width':'3'}));
     svg.appendChild(el('circle',{cx:x,cy:yf,r:7,fill:'#eb8fbd',stroke:'#0b1728','stroke-width':'3'}));
-    svg.appendChild(el('text',{x,y:H-13,'text-anchor':'middle',class:'bar-label'},'Y'+r.year));
+    svg.appendChild(el('text',{x,y:H-13,'text-anchor':'middle',class:'bar-label'},r.year==='Total'?'All':'Y'+r.year));
   });
   svg.appendChild(el('circle',{cx:W-145,cy:16,r:5,fill:'#6ea8ff'})); svg.appendChild(el('text',{x:W-133,y:20,class:'axis-label'},'Male'));
   svg.appendChild(el('circle',{cx:W-82,cy:16,r:5,fill:'#eb8fbd'})); svg.appendChild(el('text',{x:W-70,y:20,class:'axis-label'},'Female'));
+}
+
+function languageValue(row,key){
+  const count=key==='total'?row.total:(row.counts[key]||0);
+  if(languageMeasure==='number') return count;
+  const denom=key==='total'?(total?.population[0]||0):(rows.find(r=>r.year===key)?.population[0]||0);
+  return denom ? count/denom*100 : 0;
+}
+function formatLanguageValue(row,key){
+  const v=languageValue(row,key);
+  return languageMeasure==='number' ? Math.round(v).toLocaleString() : `${v.toFixed(1)}%`;
+}
+function sortedLanguageRows(){
+  const data=[...languageRows];
+  if(languageSort.dir==='none') return data.sort((a,b)=>a.language.localeCompare(b.language));
+  const factor=languageSort.dir==='desc'?-1:1;
+  return data.sort((a,b)=>{
+    const av=languageSort.key==='language'?a.language.toLocaleLowerCase():languageValue(a,languageSort.key);
+    const bv=languageSort.key==='language'?b.language.toLocaleLowerCase():languageValue(b,languageSort.key);
+    if(typeof av==='string') return av.localeCompare(bv)*factor;
+    return ((av-bv)*factor) || a.language.localeCompare(b.language);
+  });
+}
+function cycleLanguageSort(key){
+  if(languageSort.key!==key){
+    languageSort={key,dir:key==='language'?'asc':'desc'};
+  }else if(key==='language'){
+    if(languageSort.dir==='asc') languageSort.dir='desc';
+    else if(languageSort.dir==='desc') languageSort={key:'total',dir:'desc'};
+    else languageSort={key:'language',dir:'asc'};
+  }else{
+    if(languageSort.dir==='desc') languageSort.dir='asc';
+    else if(languageSort.dir==='asc') languageSort={key:'total',dir:'desc'};
+    else languageSort={key,dir:'desc'};
+  }
+  renderLanguageDistribution();
+}
+function renderLanguageHeader(){
+  const head=document.getElementById('languageHead'); head.innerHTML='';
+  const columns=[['language','Language'],...YEARS.map(y=>[y,'Year '+y]),['total','Overall']];
+  columns.forEach(([key,label])=>{
+    const th=document.createElement('th');
+    th.dataset.key=key;
+    const active=languageSort.key===key?languageSort.dir:'none';
+    th.dataset.sortDir=active;
+    th.setAttribute('aria-sort',active==='desc'?'descending':active==='asc'?'ascending':'none');
+    th.title='Sort column';
+    const text=document.createElement('span'); text.textContent=label;
+    const mark=document.createElement('span'); mark.className='sort-mark'; mark.textContent=active==='desc'?'▼':active==='asc'?'▲':'↕';
+    th.append(text,mark); th.addEventListener('click',()=>cycleLanguageSort(key)); head.appendChild(th);
+  });
+}
+function renderLanguageTable(){
+  renderLanguageHeader();
+  const body=document.getElementById('languageBody'); body.innerHTML='';
+  sortedLanguageRows().forEach(row=>{
+    const tr=document.createElement('tr');
+    const name=document.createElement('td'); name.textContent=row.language; tr.appendChild(name);
+    [...YEARS,'total'].forEach(key=>{const td=document.createElement('td');td.textContent=formatLanguageValue(row,key);tr.appendChild(td)});
+    body.appendChild(tr);
+  });
+}
+function renderLanguageChart(){
+  const box=document.getElementById('languageChart'); box.innerHTML='';
+  const data=[...languageRows].sort((a,b)=>b.total-a.total || a.language.localeCompare(b.language));
+  if(!data.length) return;
+  const key='total';
+  const values=data.map(r=>languageValue(r,key));
+  const max=Math.max(...values,1);
+  data.forEach(row=>{
+    const value=languageValue(row,key);
+    const tooltip=`${row.language}: ${row.total.toLocaleString()} pupils`;
+    const item=document.createElement('div'); item.className='lang-bar-row'; item.title=tooltip; item.setAttribute('aria-label',tooltip);
+    const name=document.createElement('div'); name.className='lang-bar-name'; name.textContent=row.language; name.title=tooltip;
+    const track=document.createElement('div'); track.className='lang-bar-track'; track.title=tooltip; const fill=document.createElement('div'); fill.className='lang-bar-fill'; fill.title=tooltip; track.appendChild(fill);
+    const label=document.createElement('div'); label.className='lang-bar-value'; label.textContent=formatLanguageValue(row,key); label.title=tooltip;
+    item.append(name,track,label); box.appendChild(item);
+    requestAnimationFrame(()=>{fill.style.width=(value/max*100)+'%'});
+  });
+}
+function renderLanguageDistribution(){
+  renderLanguageTable();
+  renderLanguageChart();
 }
 
 function populateTable(){
@@ -359,7 +509,7 @@ function populateTable(){
 
 function updateProfile(){
   const sel=document.getElementById('yearSelect');
-  const r=rows.find(x=>x.year===sel.value) || rows[0];
+  const r=sel.value==='all' ? total : (rows.find(x=>x.year===sel.value) || rows[0]);
   if(!r) return;
   const countDiff=r.eal[0]-r.flne[0], genderGap=Math.abs(r.pct[1]-r.pct[2]);
   document.getElementById('donut').style.setProperty('--p',r.pct[0]);
@@ -375,8 +525,9 @@ function updateProfile(){
 function setupProfile(){
   const sel=document.getElementById('yearSelect'); const previous=sel.value;
   sel.innerHTML='';
+  const all=document.createElement('option'); all.value='all'; all.textContent='All years'; sel.appendChild(all);
   rows.forEach(r=>{const o=document.createElement('option');o.value=r.year;o.textContent='Year '+r.year;sel.appendChild(o)});
-  if(rows.some(r=>r.year===previous)) sel.value=previous;
+  if(previous==='all' || rows.some(r=>r.year===previous)) sel.value=previous;
   updateProfile();
 }
 
@@ -404,6 +555,8 @@ function renderKpis(){
 function renderInsights(){
   const highest=rows.reduce((a,b)=>b.pct[0]>a.pct[0]?b:a,rows[0]);
   const widest=rows.reduce((a,b)=>Math.abs(b.pct[1]-b.pct[2])>Math.abs(a.pct[1]-a.pct[2])?b:a,rows[0]);
+  const nonEnglishLanguages=languageRows.filter(r=>!FLNE_EXCLUDED.has(canonicalLanguage(r.language)));
+  const largestNonEnglish=nonEnglishLanguages.length ? nonEnglishLanguages.reduce((a,b)=>b.total>a.total?b:a,nonEnglishLanguages[0]) : null;
   const gap=Math.abs(widest.pct[1]-widest.pct[2]);
   const higher=widest.pct[1]===widest.pct[2]?'Male and female':(widest.pct[1]>widest.pct[2]?'Male':'Female');
   const lower=higher==='Male'?'female':'male';
@@ -420,6 +573,7 @@ function renderInsights(){
     ['↑',`Year ${highest.year} has the highest EAL prevalence`,`${highest.pct[0]}% overall, with ${highest.pct[1]}% of boys and ${highest.pct[2]}% of girls recorded as EAL.`],
     ['↕',`The widest gender gap is in Year ${widest.year}`,gap===0?`Male and female prevalence are both ${widest.pct[1]}%.`:`${higher} prevalence is ${Math.max(widest.pct[1],widest.pct[2])}% compared with ${Math.min(widest.pct[1],widest.pct[2])}% for ${lower}s — a ${gap} percentage-point gap.`],
     ['≈',wholeTitle,`Overall prevalence is ${total.pct[1]}% for males and ${total.pct[2]}% for females.`],
+    ...(largestNonEnglish ? [['言',`${largestNonEnglish.language} is the largest non-English first language`,`${largestNonEnglish.total.toLocaleString()} pupils have ${largestNonEnglish.language} recorded as their first language.`]] : []),
     ['Δ',countTitle,countText]
   ];
   const box=document.getElementById('insights'); box.innerHTML='';
@@ -436,11 +590,13 @@ function showError(err){
   console.error(err);
   setStatus('Live data unavailable');
   const body=document.getElementById('dataBody');
+  document.getElementById('languageBody').innerHTML='<tr><td colspan="9" style="text-align:left;color:var(--danger);padding:18px">Unable to load live language data.</td></tr>';
+  document.getElementById('languageChart').innerHTML='<div style="color:var(--danger);padding:8px">Unable to load live language data.</div>';
   body.innerHTML='<tr><td colspan="10" style="text-align:left;color:var(--danger);padding:18px">Unable to load the live Arbor export. Check the network connection and that the export allows browser access from this page.</td></tr>';
   const box=document.getElementById('insights');
   box.innerHTML='<div class="insight"><div class="icon">!</div><div><b>Live data could not be loaded</b><p>The dashboard has not substituted old figures. Reload the page after checking access to the Arbor export.</p></div></div>';
   ['kpiEalNote','kpiRateNote','kpiHighestNote','kpiLowestNote','kpiFlneNote'].forEach(id=>document.getElementById(id).textContent='Live data unavailable');
-  document.getElementById('footerNote').textContent='Live data could not be loaded.';
+  document.getElementById('footerNote').textContent='Live data could not be loaded. This page deliberately does not display stale fallback figures.';
 }
 
 async function loadData(){
@@ -460,6 +616,7 @@ async function loadData(){
     renderInsights();
     renderPrevalence(currentGender);
     renderGender();
+    renderLanguageDistribution();
     populateTable();
     setupProfile();
     const stamp=new Intl.DateTimeFormat(undefined,{hour:'2-digit',minute:'2-digit'}).format(new Date());
@@ -470,6 +627,17 @@ async function loadData(){
 document.querySelectorAll('#genderSeg button').forEach(b=>b.addEventListener('click',()=>{
   document.querySelectorAll('#genderSeg button').forEach(x=>x.classList.remove('active'));
   b.classList.add('active'); currentGender=b.dataset.g; renderPrevalence(currentGender);
+}));
+document.querySelectorAll('#languageMeasureSeg button').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('#languageMeasureSeg button').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active'); languageMeasure=b.dataset.measure; renderLanguageDistribution();
+}));
+document.querySelectorAll('#languageViewSeg button').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('#languageViewSeg button').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active'); languageView=b.dataset.view;
+  document.getElementById('languageTableView').hidden=languageView!=='table';
+  document.getElementById('languageChartView').hidden=languageView!=='chart';
+  if(languageView==='chart') renderLanguageChart();
 }));
 document.getElementById('yearSelect').addEventListener('change',updateProfile);
 loadData();
